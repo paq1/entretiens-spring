@@ -1,6 +1,7 @@
 package org.example.app.api;
 
 import org.example.core.services.HelloWorldService;
+import org.example.models.views.JsonApi;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

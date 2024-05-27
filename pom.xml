@@ -26,6 +26,7 @@
     <modules>
         <module>app</module>
         <module>core</module>
+        <module>models</module>
     </modules>
 
     <dependencyManagement>
