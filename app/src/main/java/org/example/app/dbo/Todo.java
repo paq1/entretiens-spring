@@ -21,4 +21,8 @@ public class Todo {
         this.description = description;
         this.done = done;
     }
+
+    public String getTitle() {
+        return title;
+    }
 }
