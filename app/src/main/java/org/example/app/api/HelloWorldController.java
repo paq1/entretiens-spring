@@ -15,6 +15,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/todo")
 public class HelloWorldController {
 
     private final HelloWorldService helloWorldService;
@@ -49,8 +50,7 @@ public class HelloWorldController {
 
     @PostMapping("/")
     public ResponseEntity<JsonApi<Todo>> hello(@RequestBody Todo todo) {
-        Todo result = this.todoRepository.insert(new Todo(UUID.randomUUID().toString(), "test", "test", true));
-
+        Todo result = this.todoRepository.insert(todo);
         return ResponseEntity.status(201).body(new JsonApi<>(result));
     }
 }
