@@ -15,7 +15,7 @@
     <description>app</description>
 
     <properties>
-        <java.version>22</java.version>
+        <java.version>17</java.version>
         <spring-boot.run.skip>false</spring-boot.run.skip>
     </properties>
 

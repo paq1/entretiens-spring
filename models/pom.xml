@@ -14,7 +14,7 @@
     <name>models</name>
     <description>models</description>
     <properties>
-        <java.version>22</java.version>
+        <java.version>17</java.version>
         <spring-boot.run.skip>true</spring-boot.run.skip>
     </properties>
     <dependencies>
