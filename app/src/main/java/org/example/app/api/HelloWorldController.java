@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/todo")
@@ -30,7 +27,7 @@ public class HelloWorldController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<JsonApi<String>> hello(@PathVariable String id) {
+    public ResponseEntity<JsonApi<String>> fetchOne(@PathVariable String id) {
 
         Optional<ResponseEntity<JsonApi<String>>> optResp = this
                 .todoRepository
@@ -49,7 +46,7 @@ public class HelloWorldController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<JsonApi<Todo>> hello(@RequestBody Todo todo) {
+    public ResponseEntity<JsonApi<Todo>> insertOne(@RequestBody Todo todo) {
         Todo result = this.todoRepository.insert(todo);
         return ResponseEntity.status(201).body(new JsonApi<>(result));
     }
