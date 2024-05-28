@@ -1,4 +1,4 @@
 package org.example.models.views;
 
-public record JsonApi(String data) {
+public record JsonApi<T>(T data) {
 }

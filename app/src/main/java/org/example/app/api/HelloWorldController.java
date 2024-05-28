@@ -6,10 +6,13 @@ import org.example.core.services.HelloWorldService;
 import org.example.models.views.JsonApi;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 public class HelloWorldController {
@@ -25,11 +28,29 @@ public class HelloWorldController {
         this.todoRepository = todoRepository;
     }
 
-    @GetMapping("/")
-    public ResponseEntity<JsonApi> hello() {
+    @GetMapping("/{id}")
+    public ResponseEntity<JsonApi<String>> hello(@PathVariable String id) {
 
-        this.todoRepository.insert(new Todo(UUID.randomUUID().toString(), "test", "test", true));
+        Optional<ResponseEntity<JsonApi<String>>> optResp = this
+                .todoRepository
+                .findFirstByTitle(id)
+                .stream()
+                .map(x -> new ResponseEntity<>(new JsonApi<>(x.getTitle()), HttpStatus.OK))
+                .findFirst();
 
-        return new ResponseEntity<>(new JsonApi(this.helloWorldService.sayHello()), HttpStatus.OK);
+        if (optResp.isPresent()) {
+            return optResp.get();
+        } else {
+            // fixme faire un mapping pour l'erreur
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Foo Not Found", new Exception("pas trouvé"));
+        }
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<JsonApi<Todo>> hello(@RequestBody Todo todo) {
+        Todo result = this.todoRepository.insert(new Todo(UUID.randomUUID().toString(), "test", "test", true));
+
+        return ResponseEntity.status(201).body(new JsonApi<>(result));
     }
 }
