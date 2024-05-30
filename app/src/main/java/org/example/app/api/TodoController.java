@@ -1,9 +1,12 @@
 package org.example.app.api;
 
 import org.example.app.dbo.Todo;
+import org.example.app.mappers.TodoMapper;
 import org.example.app.repositories.TodoRepository;
+import org.example.models.commands.CreateTodo;
 import org.example.models.views.Many;
 import org.example.models.views.Single;
+import org.example.models.views.TodoView;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,33 +18,42 @@ import java.util.Optional;
 public class TodoController {
 
     private final TodoRepository todoRepository;
+    private final TodoMapper todoMapper;
 
     public TodoController(
-            TodoRepository todoRepository
+            TodoRepository todoRepository,
+            TodoMapper todoMapper
     ) {
         this.todoRepository = todoRepository;
+        this.todoMapper = todoMapper;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Single<Todo>> fetchOne(@PathVariable String id) {
+    public ResponseEntity<Single<TodoView>> fetchOne(@PathVariable String id) {
         return this
                 .todoRepository
                 .findByTitle(id)
-                .map(x -> ResponseEntity.of(Optional.of(new Single<>(x))))
+                .map(x -> ResponseEntity.of(Optional.of(new Single<>(todoMapper.todoToTodoView(x)))))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/")
-    public ResponseEntity<Many<Todo>> fetchMany() {
-        List<Todo> todos = this
+    public ResponseEntity<Many<TodoView>> fetchMany() {
+        List<TodoView> todos = this
                 .todoRepository
-                .findAll();
+                .findAll()
+                .stream()
+                .map(todoMapper::todoToTodoView)
+                .toList();
+
         return ResponseEntity.ok(new Many<>(todos));
     }
 
     @PostMapping("/")
-    public ResponseEntity<Single<Todo>> insertOne(@RequestBody Todo todo) {
-        Todo result = this.todoRepository.save(todo);
-        return ResponseEntity.status(201).body(new Single<>(result));
+    public ResponseEntity<Single<TodoView>> insertOne(@RequestBody CreateTodo todo) {
+
+        Todo todoEntity = new Todo(todo.title(), todo.description(), todo.status());
+        Todo result = this.todoRepository.save(todoEntity);
+        return ResponseEntity.status(201).body(new Single<>(todoMapper.todoToTodoView(result)));
     }
 }
